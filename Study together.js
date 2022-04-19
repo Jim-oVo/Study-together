@@ -658,13 +658,13 @@ s.setTextSize(12); //设置文字大小
 /**
  * @description: 视频学习秒数
  */
-var video_s = 6;
-
+var video_s = hamibot.env.video_s;
+if(!video_s) video_s = 6;
 /**
  * @description: 文章学习秒数
  */
-var article_s = 45;
-
+var article_s = hamibot.env.article_s;
+if(!article_s) article_s = 45;
 /**
  * @description: 文章学习篇数
  */
@@ -731,40 +731,44 @@ var local_num = 1;
 var delay_time = 0;
 
 /**
- * @description: 本地题库存储
+ * @description: 本地题库存储->[num,[question,answer]]
  */
- var storage1 = storages.create('Twelve:question');
+var storage1 = storages.create('Twelve:question');
 
- /**
-  * @description: 本地文字识别内容对应题库
-  */
-  var storage2 = storages.create('Twelve:local');
- /**
-  * @description: 题库列表
-  */
- var question_list = [];
+/**
+ * @description: 本地文字识别内容对应题库->[question,answer]
+ */
+var storage2 = storages.create('Twelve:local');
+/**
+ * @description: 题库列表
+ */
+var question_list = [];
 
 /**
  * @description: 题是否为读音字形
  */
- var yinzi = false;
+var yinzi = false;
 
- /**
-  * @description: 是否第一题
-  */
- var first = true;
+/**
+ * @description: 是否第一题
+ */
+var first = true;
 
- /**
-  * @description: 四人/双人 记录当前题目
-  */
- var old_q = '';
+/**
+ * @description: 四人/双人 记录当前题目
+ */
+var old_q = '';
 
- /**
-  * @description: 四人/双人 记录当前题目答案
-  */
- var old_ans = '';
+/**
+ * @description: 四人/双人 记录当前题目答案
+ */
+var old_ans = '';
 
-
+/**
+ * @description: OCR模式选择
+ */
+var choose = hamibot.env.mode;
+if(!choose){choose = 'c';}
 
 /**
  * @description: 随机延迟
@@ -1549,8 +1553,6 @@ function do_contest_answer(depth_option, question1) {
             console.error('没搜到答案,题目异常：\n“'+old_question+'”');
             s.error('此题异常');
         }
-    }else{
-        s.log('有此题');
     }
     if (answer) {
         old_q = question;
@@ -2034,12 +2036,12 @@ function get_requestScreenCapture(){
  * @description: 数组随机排序
  */
 function disorder(arr){
-    let length = arr.length
-    let current = arr.length - 1
-    let random
+    let length = arr.length;
+    let current = arr.length - 1;
+    let random;
     while(current >= 0){
       random = Math.floor(length*Math.random());
-      [arr[current], arr[random]] = [arr[random], arr[current]]
+      [arr[current], arr[random]] = [arr[random], arr[current]];
       current--;
     }
     return arr;
@@ -2114,5 +2116,4 @@ function main(){
     s.close();
     exit();
 }
-var choose = 'c';
 main();
