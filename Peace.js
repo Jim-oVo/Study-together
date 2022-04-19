@@ -830,6 +830,7 @@ var commits = ['富强、民主、文明、和谐','自由、平等、公正、�
 function study_article(xxx){
     if(article_num==0) return;
     s.info('正在文章学习');
+    back_table();
     delay(2);
     if(xxx){
         desc('工作').click();
@@ -920,6 +921,7 @@ function study_article(xxx){
 function local_(){
     if(local_num == 0) return;
     s.info('开始本地频道');
+    back_table();
     desc('工作').click();
     delay(2);
     text("要闻").findOne().parent().parent().child(3).click();
@@ -935,6 +937,7 @@ function local_(){
 function study_video(){
     if(video_num == 0) return;
     s.info('正在视频学习');
+    back_table();
     s.warn('还需学习'+(video_num)+'篇视频');
     delay(2);
     click('百灵');
@@ -1319,8 +1322,8 @@ function zsyAnswer() {
                     threshold: 10,
                 });
             } while (!point);
-            if(q_right == true){
-                storage2.put(old_q,old_ans);
+            if(q_right == true){    // 如果当前题目正确
+                storage2.put(old_q,old_ans);    // 存入本地存储，减小下一次搜该题的时间
             }
             s.log('----------');
             yinzi = false;
@@ -1835,6 +1838,7 @@ function back_table() {
  * @param:开true -> 关false
  */
 function start_close_radio(flag){
+    back_table();
     if(flag){
         click('电台');
         delay(1);
@@ -1856,3 +1860,64 @@ function start_close_radio(flag){
         }
     }
 }
+
+/**
+ * @description: 订阅
+ */
+function sub(){
+    if(sub_num == 0 || hamibot.env.sub=='a') return;
+    if(!files.exists('/sdcard/sub_position.txt')){
+        s.error('没有订阅坐标，跳过订阅');
+        return;
+    }
+    s.info('开始订阅,还需要订阅'+(sub_num)+"个");
+    back_table();
+    desc('工作').click();
+    delay(2);
+    click('订阅');
+    delay(2);
+    text('添加').depth(25).findOne().parent().click();
+    delay(2);
+    try{
+        if(hamibot.env.sub == 'b'){     // 只查看上新
+            sub_click();
+        }
+    }
+    catch(e){
+        log(e);
+        s.error('坐标错误？重新生成坐标试试');
+        back_table();
+    }
+}
+/**
+ * @description: 订阅平台切换
+ */
+function sub_click(){
+    eval(files.read('/sdcard/sub_position.txt'));
+    for(var i = 0;i<position.length && sub_num;i+=2){
+        press(position[i],position[i+1],100);
+        if(i == 0 || i == 23){delay(0.5);continue};
+
+    }
+}
+/**
+ * @description: 点击订阅
+ */
+function pic_click() {
+    while (sub_num > 0) {
+        let result = findColor(captureScreen(), '#E42417', {
+            max: 5,
+            region: [s1, 100, device.width - s1, device.height - 200], //区域
+            threshold: 10,
+        });
+        if (result) {
+            console.log("已经订阅了" + (3 - sub_num) + "个");
+            press(result.x + 10, result.y + 10,100);
+            sub_num--;
+        } else {
+            break;
+        }
+        delay(1);
+    }
+}
+
