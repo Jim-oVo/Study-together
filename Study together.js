@@ -658,12 +658,12 @@ s.setTextSize(12); //设置文字大小
 /**
  * @description: 视频学习秒数
  */
-var video_s = hamibot.env.video_s;
+var video_s = hamibot.env.video_s*1;
 if(!video_s) video_s = 6;
 /**
  * @description: 文章学习秒数
  */
-var article_s = hamibot.env.article_s;
+var article_s = hamibot.env.article_s*1;
 if(!article_s) article_s = 45;
 /**
  * @description: 文章学习篇数
@@ -728,7 +728,8 @@ var local_num = 1;
 /**
  * @description: 四人双人单题答题延迟时间
  */
-var delay_time = 0;
+var delay_time = hamibot.env.delay_time;
+if(!delay_time) delay_time = 0;
 
 /**
  * @description: 本地题库存储->[num,[question,answer]]
@@ -767,8 +768,13 @@ var old_ans = '';
 /**
  * @description: OCR模式选择
  */
-var choose = hamibot.env.mode;
+var choose = hamibot.env.choose;
 if(!choose){choose = 'c';}
+
+/**
+ * @description: 选项错字替换
+ */
+var replace = null;
 
 /**
  * @description: 随机延迟
@@ -1080,6 +1086,7 @@ function daily_Answer(){
             if (!text("领取奖励已达今日上限").exists()) {
                 s.warn('积分未满，再答一次');
                 text("再来一组").click();
+                delay(2);
             }else {
                 text("返回").click();
                 delay(2);
@@ -1221,6 +1228,9 @@ function init_question_list(){
     }catch(e){
         s.error('题库更新失败');
     }
+    try{
+        eval(http.get('https://gitee.com/lctwelve/Peace/raw/master/replace.txt').body.string());
+    }catch(e){};
     length = Number(storage1.get(0).split('?')[0]);
     for(var i = 1 ; i<=length;i++){
         question_list.push(storage1.get(i));
@@ -1537,7 +1547,7 @@ function do_contest_answer(depth_option, question1) {
     }
     if(yinzi) question = answers_list;
     answer = storage2.get(question);
-    if(yinzi || !answer){
+    if(!answer){
         for(var i = 0;i<question_list.length;i++){          // 搜题
             var sx = similarity(question_list[i][1],question_list[i][0],question,yinzi);
             if(sx>similars){
@@ -1637,7 +1647,7 @@ function click_by_answer(ans,question){
     question = question.replace(/4\./g,'A.');
     question = question.replace(/:/g,'：');
     try{
-        question = r.replace(question);
+        question = replace(question);
     }catch(e){}
     question = question.replace(/c\./g,"C.");
     question = question.replace(/，/g,".");
@@ -1881,7 +1891,7 @@ function back_table() {
     delay(1);
     var back_num = 0;
     while (!desc("工作").exists()) { //等待加载出主页
-        s.info("当前没有在主页，正在返回主页");
+        s.log("当前没有在主页，正在返回主页");
         back();
         delay(1);
         back_num++;

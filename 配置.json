@@ -1,0 +1,60 @@
+[
+  {
+    "name": "article",
+    "type": "checkbox",
+    "label": "文章学习"
+  },
+  {
+    "name": "video",
+    "type": "checkbox",
+    "label": "视频学习"
+  },
+  {
+    "name": "day",
+    "type": "checkbox",
+    "label": "每日答题"
+  },
+  {
+    "name": "challenge",
+    "type": "checkbox",
+    "label": "挑战答题"
+  },
+  {
+    "name": "four",
+    "type": "checkbox",
+    "label": "四人赛"
+  },
+  {
+    "name": "double",
+    "type": "checkbox",
+    "label": "双人对战"
+  },
+  {
+    "name": "sub",
+    "type": "checkbox",
+    "label": "订阅"
+  },
+  {
+    "name": "local",
+    "type": "checkbox",
+    "label": "本地频道"
+  },
+  {
+    "name": "article_s",
+    "type": "number",
+    "label": "每篇文章学习秒数-s",
+    "placeholder": "45"
+  },
+  {
+    "name": "video_s",
+    "type": "number",
+    "label": "每篇视频学习秒数-s",
+    "placeholder": "6"
+  },
+  {
+    "name": "delay_time",
+    "type": "number",
+    "label": "四人/双人每题答题延迟毫秒数-ms",
+    "placeholder": "0"
+  }
+]
