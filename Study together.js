@@ -1896,7 +1896,7 @@ function back_table() {
     delay(1);
     var back_num = 0;
     while (!desc("工作").exists()) { //等待加载出主页
-        s.log("当前没有在主页，正在返回主页");
+        s.log("正在返回主页");
         back();
         delay(1);
         back_num++;
