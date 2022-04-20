@@ -799,6 +799,9 @@ function get_all_num(){
     delay(1);
     var score = {};
     var list_view = className("android.widget.ListView").findOne(5000);
+    if(arguments.length>=2){    // 返回分数情况->PushDeer
+        var texts = textContains("今日已累积").findOne().text();
+    }
     for(var i = 0;i<list_view.childCount();i++){
         var son = list_view.child(i);
         try {
@@ -808,6 +811,11 @@ function get_all_num(){
         }
         var sx = son.child(2).text().split("/")[0].match(/[0-9][0-9]*/g);
         score[names] = Number(sx);
+        if(arguments.length>=2){    // 返回分数情况->PushDeer
+            texts += '%0A - '+names+':'+son.child(2).text().split("/")[0].match(/[0-9][0-9]*/g)+'/'+son.child(2).text().split("/")[1].match(/[0-9][0-9]*/g);
+            back_table();
+            if(i == list_view.childCount()-1) return texts;
+        }
     }
     video_num = 6-score['视听学习'];
     if(arguments.length>=1){
@@ -2065,7 +2073,17 @@ function disorder(arr){
       current--;
     }
     return arr;
-  }
+}
+/**
+ * @description: 积分推送到PushDeer
+ */
+function PushDeer(){
+    if(!hamibot.env.key||hamibot.env.key=='') return;
+    back_table();
+    var texts = get_all_num(1,1);
+    http.get('https://api2.pushdeer.com/message/push?pushkey='+hamibot.env.key.replace(/ /g,"")+'&text='+texts+'&type=markdown');
+    texts = null;
+}
 /**
  * @description: 主函数
  */
