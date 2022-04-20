@@ -56,5 +56,11 @@
     "type": "number",
     "label": "四人/双人每题答题延迟毫秒数-ms",
     "placeholder": "0"
+  },
+  {
+    "name": "watchdog_time",
+    "type": "number",
+    "label": "看门狗设置时长秒-s",
+    "placeholder": "2000"
   }
 ]

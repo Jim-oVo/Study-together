@@ -777,6 +777,11 @@ if(!choose){choose = 'c';}
 var replace = null;
 
 /**
+ * @description: 看门狗时长
+ */
+var watchdog_time = hamibot.env.watchdog_time*1*1000;
+if(!watchdog_time) watchdog_time=2000*1000;
+/**
  * @description: 随机延迟
  * @param: seconds-延迟秒数[a,a+1]
  */
@@ -1916,6 +1921,7 @@ function back_table() {
 function start_close_radio(flag){
     back_table();
     if(flag){
+        s.info("正在打开广播");
         click('电台');
         delay(1);
         click('听广播');
@@ -1926,6 +1932,7 @@ function start_close_radio(flag){
         }
     }
     else{
+        s.info("正在关闭广播");
         click('电台');
         delay(1);
         click('听广播');
@@ -2060,14 +2067,7 @@ function disorder(arr){
  * @description: 主函数
  */
 function main(){
-    s.info('Study togther开始运行!!!');
-    if(hamibot.env.double||hamibot.env.four){
-        get_requestScreenCapture();
-        delay(1);
-    }
-    if(hamibot.env.double || hamibot.env.four || hamibot.challenge){
-        init_question_list();
-    }
+    device.keepScreenOn(60*60*1000);// 设置亮屏一小时
     s.info('启动xxqg');
     launchApp("学习强国") || launch('cn.xuexi.android');
     while(!desc('工作').exists()){
@@ -2088,42 +2088,66 @@ function main(){
         switch (i){
             case 1:
                 study_article();
-                delay(2);
                 break;
             case 2:
                 study_video();
-                delay(2);
                 break;
             case 3:
                 daily_Answer();
-                delay(2);
                 break;
             case 4:
                 challenge();
-                delay(2);
                 break;
             case 5:
                 four();
-                delay(2);
                 break;
             case 6:
                 double();
-                delay(2);
                 break;
             case 7:
                 //sub();
-                //delay(2);
                 break;
             case 8:
                 local_();
-                delay(2);
                 break;
         }
+        delay(2);
     })
+    device.cancelKeepingAwake();    // 取消屏幕常亮
     back_table();
     s.info('脚本运行结束，3s后自动退出');
     delay(3);
     s.close();
     exit();
 }
-main();
+/**
+ * @description: 看门狗运行主函数main()
+ */
+function watchdog(){
+    device.wakeUpIfNeeded();
+    s.info('Study togther开始运行!!!');
+    if(hamibot.env.double||hamibot.env.four){
+        get_requestScreenCapture();
+        delay(1);
+    }
+    if(hamibot.env.double || hamibot.env.four || hamibot.challenge){
+        init_question_list();
+    }
+    var thread = null;
+    var main_num = 3;
+    while(main_num--){
+        thread = threads.start(function(){
+            main();
+        })
+        thread.join(watchdog_time);
+        thread.interrupt();
+        s.error('脚本超时/出错,正在重新启动');
+        delay(2);
+        back_table();
+        delay(2);
+    }
+    toastLog("已经重新运行了多次，脚本结束");
+    s.close();
+    exit();
+}
+watchdog();
