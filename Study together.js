@@ -410,18 +410,18 @@ control.clear = function(s) {
 
 function createWindow() {
     let window = floaty.rawWindow(
-        <frame id="vi" w="*" h="*"  padding="0 0 0 0" >
-            <LinearLayout layout_width="match_parent" layout_height="match_parent" orientation="vertical">
-                <LinearLayout padding="10 5 10 5" id="bart" bg="#ee000011" w="*" h="auto" margin="0" >
-                    <text id="bear" text="log" textColor="#ffffff" layout_weight="1" />
-                    <text w="auto" textColor="#FFFFFF" id="exit" text="退出" padding="0" margin="0" />
-                </LinearLayout>
-                <ScrollView id="scroll" padding="0" margin="0" layout_weight="1">
-                    <LinearLayout padding="2 0 2 0" id="content"  orientation="vertical">
-                    </LinearLayout>
-                </ScrollView>
-            </LinearLayout>
-        </frame>
+        '<frame id="vi" w="*" h="*"  padding="0 0 0 0" >\
+            <LinearLayout layout_width="match_parent" layout_height="match_parent" orientation="vertical">\
+                <LinearLayout padding="10 5 10 5" id="bart" bg="#ee000011" w="*" h="auto" margin="0" >\
+                    <text id="bear" text="log" textColor="#ffffff" layout_weight="1" />\
+                    <text w="auto" textColor="#FFFFFF" id="exit" text="退出" padding="0" margin="0" />\
+                </LinearLayout>\
+                <ScrollView id="scroll" padding="0" margin="0" layout_weight="1">\
+                    <LinearLayout padding="2 0 2 0" id="content"  orientation="vertical">\
+                    </LinearLayout>\
+                </ScrollView>\
+            </LinearLayout>\
+        </frame>'
     );
 
     window.exit.on('click', function() {
@@ -1904,6 +1904,7 @@ function back_table() {
             var c = className('Button').textContains('退出').findOne(3000);
             if(c) c.click();
             delay(1);
+            c = null;
         }
         if(back_num>10){
             s.error('返回超过10次，可能当前不在xxqg，正在启动app...');
@@ -1913,6 +1914,7 @@ function back_table() {
             back_num = 0;
         }
     }
+    back_num = null;
 }
 /**
  * @description: 开关广播
@@ -1930,6 +1932,7 @@ function start_close_radio(flag){
         if(tmp){
             tmp.child(0).click();
         }
+        tmp = null;
     }
     else{
         s.info("正在关闭广播");
@@ -2147,6 +2150,7 @@ function watchdog(){
         delay(2);
     }
     toastLog("已经重新运行了多次，脚本结束");
+    thread = null;
     s.close();
     exit();
 }
