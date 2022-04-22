@@ -898,11 +898,13 @@ function study_article(){
                                 delay(5);
                             }
                             var tmp = Math.random();
-                            if(tmp>0.9){
-                                swipe(device.width/2+Math.random()*100,3*device.height/4+Math.random()*100,device.width/2-Math.random()*100,device.height/4,Math.random()*1000);
-                            }else if(tmp < 0.1){
-                                swipe(device.width/2-Math.random()*100,device.height/4+Math.random()*100,device.width/2,3*device.height/4-Math.random()*100,Math.random()*1000);
-                            }
+                            try{
+                                if(tmp>0.9){
+                                    swipe(device.width/2+Math.random()*100,3*device.height/4+Math.random()*100,device.width/2-Math.random()*100,device.height/4,Math.random()*1000);
+                                }else if(tmp < 0.1){
+                                    swipe(device.width/2-Math.random()*100,device.height/4+Math.random()*100,device.width/2,3*device.height/4-Math.random()*100,Math.random()*1000);
+                                }
+                            }catch(e){}
                             i++;
                             if(i%5==0){
                                 s.log('已经学习文章'+i+'s,'+'还剩'+(t-i)+'s');
