@@ -1037,7 +1037,7 @@ function study_video(){
     img=images.interval(img, "#FD1111", 60)//图片二值化
   //   images.save(img,'/sdcard/1.png')
     var ansList=baidu_ocr_api_return_list(img,token)
-    console.info(ansList)
+    s.info(ansList)
   }
 
 
@@ -1815,10 +1815,10 @@ function questionShow() {
     );
     var xad = res.body.json()['access_token'];
     if(xad == null){
-        console.error('百度文字识别（OCR）载入失败');
+        s.error('百度文字识别（OCR）载入失败');
         exit();
     } else {
-        console.info('百度文字识别（OCR）载入成功');
+        s.info('百度文字识别（OCR）载入成功');
     }
     return xad;
 }
@@ -1846,7 +1846,7 @@ function baidu_ocr_api(img) {
     try {
         var words_list = res.words_result;
     } catch (error) {
-        console.error('百度ocr文字识别请求错误：可能有以下情况\n1.百度ocr欠费\n2.其他的错误');
+        s.error('百度ocr文字识别请求错误：可能有以下情况\n1.百度ocr欠费\n2.其他的错误');
         exit();
     }
     for (var i in words_list) {
