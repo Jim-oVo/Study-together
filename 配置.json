@@ -58,6 +58,23 @@
     "placeholder": "0"
   },
   {
+    "name": "another",
+    "type": "number",
+    "label": "四人/双人额外的乱答次数",
+    "placeholder": "0"
+  },
+  {
+    "name": "choose",
+    "type": "select",
+    "label": "文字识别(OCR)类型选择",
+    "options": {
+      "c": "hamibot内置OCR->推荐",
+      "a": "华为OCR接口,需要填入以下关于华为的内容",
+      "d": "百度OCR接口,需要填入以下关于百度的内容",
+      "b": "第三方OCR插件,需要安装第三方插件"
+    }
+  },
+  {
     "name": "watchdog_time",
     "type": "number",
     "label": "看门狗设置时长秒-s",

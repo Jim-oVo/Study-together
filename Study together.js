@@ -1728,6 +1728,9 @@ function similarity_answer(op,ans){
     }
     return num/(2*op.length+2*ans.length);
 }
+/**
+ * @description: 四人赛
+ */
 function four(){
     if(four_num == 0||!hamibot.env.four) return ;
     s.info('开始四人赛');
@@ -1736,6 +1739,9 @@ function four(){
     delay(1);
     zsyAnswer();
 }
+/**
+ * @description: 双人对战
+ */
 function double(){
     if(double_num == 0||!hamibot.env.double) return ;
     s.info('开始双人对战');
