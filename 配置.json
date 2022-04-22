@@ -75,6 +75,18 @@
     }
   },
   {
+    "name": "client_id",
+    "type": "text",
+    "label": "百度OCR的API Key",
+    "help": " -"
+  },
+  {
+    "name": "client_secret",
+    "type": "text",
+    "label": "百度OCR的Secret Key",
+    "help": " -"
+  },
+  {
     "name": "watchdog_time",
     "type": "number",
     "label": "看门狗设置时长秒-s",
