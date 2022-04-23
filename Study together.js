@@ -2337,9 +2337,9 @@ function get_requestScreenCapture(){
         wait_num++;
     }
     s.info('截图权限获取完成');
-    if(choose == 'd' || hamibot.env.week){  // 获取百度OCR的token
+    if(choose == 'd' || hamibot.env.week){  // 获取百度OCR的token,在hamibot内获取
         if(hamibot.env.client_id&&hamibot.env.client_secret) {
-            token=get_baidu_token(hamibot.env.client_id,hamibot.env.client_secret)
+            token=get_baidu_token(hamibot.env.client_id,hamibot.env.client_secret);
         }
     }
 }
