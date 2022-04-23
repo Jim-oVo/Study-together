@@ -1,8 +1,9 @@
+var m1={}
 /**
  * @description: 获取百度OCR_token
  * @return: access_token
  */
-function get_baidu_token(client_id,client_secret) {    // 百度ocr
+m1.get_baidu_token=function(client_id,client_secret) {    // 百度ocr
     var res = http.post(
         'https://aip.baidubce.com/oauth/2.0/token',
         {
@@ -25,7 +26,7 @@ function get_baidu_token(client_id,client_secret) {    // 百度ocr
  * @author:Lejw
  * @return: 文字识别内容
  */
-function baidu_ocr_api_return_list(img,token) {
+m1.baidu_ocr_api_return_list=function(img,token) {
     console.log('百度ocr文字识别中');
     var answer = "";
     var res = http.post(
@@ -58,7 +59,7 @@ function baidu_ocr_api_return_list(img,token) {
  * @author:Lejw
  * @return:答案列表
  */
-function getAnsList() {
+m1.getAnsList=function() {
   auto.waitFor();
   if (!requestScreenCapture()) {
     toastLog('没有授予 Hamibot 屏幕截图权限');
@@ -74,8 +75,9 @@ function getAnsList() {
   var img = images.clip(captureScreen(),x,y,w,h);//裁切提示
   img=images.interval(img, "#FD1111", 60)//图片二值化
   images.save(img,'/sdcard/1.png')
-  var token=get_baidu_token("OeHCGQEbB1BfHoriYI5Rc6gr","YIGl0GGrzDG93LgthDl4oflBXulLnRlE")
-  var ansList=baidu_ocr_api_return_list(img,token)
+  var token=m1.get_baidu_token("OeHCGQEbB1BfHoriYI5Rc6gr","YIGl0GGrzDG93LgthDl4oflBXulLnRlE")
+  var ansList=m1.baidu_ocr_api_return_list(img,token)
   console.info(ansList)
   return ansList
 }
+module.exports=m1

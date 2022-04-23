@@ -1036,7 +1036,17 @@ function study_video(){
     var img = images.clip(captureScreen(),x,y,w,h);//裁切提示
     img=images.interval(img, "#FD1111", 60)//图片二值化
   //   images.save(img,'/sdcard/1.png')
-    var ansList=baidu_ocr_api_return_list(img,token)
+    var ansLis=[]
+    if (choose == 'a') {
+        //TODO：HUAWEI_OCR 
+    } else if (choose == 'b') {
+        //TODO: THIRD_PARTY_OCR
+    } else if (choose == 'c') {
+        ansList=hamibot_ocr_api_return_list(img);
+    } else {
+        var token=get_baidu_token(hamibot.env.client_id,hamibot.env.client_secret);
+        ansList=baidu_ocr_api_return_list(img,token)
+    }
     s.info(ansList)
   }
 
@@ -2107,6 +2117,57 @@ function hamibot_ocr_api() {
     list = null;
     return res;
 }
+
+/**
+ * @description: 返回结果列表的Hamibot文字识别
+ * @author:Lejw
+ * @return: 文字识别内容
+ */
+ function hamibot_ocr_api_return_list() {
+    s.log('hamibot文字识别中');
+    let list = ocr.recognize(arguments[0])['results']; // 识别文字，并得到results
+    let eps = 5; // 坐标误差
+    if (arguments.length >= 2) eps = arguments[1];
+    for (
+      var i = 0;
+      i < list.length;
+      i++ // 选择排序对上下排序,复杂度O(N²)但一般list的长度较短只需几十次运算
+    ) {
+      for (var j = i + 1; j < list.length; j++) {
+        if (list[i]['bounds']['bottom'] > list[j]['bounds']['bottom']) {
+          var tmp = list[i];
+          list[i] = list[j];
+          list[j] = tmp;
+        }
+      }
+    }
+  
+    for (
+      var i = 0;
+      i < list.length;
+      i++ // 在上下排序完成后，进行左右排序
+    ) {
+      for (var j = i + 1; j < list.length; j++) {
+        // 由于上下坐标并不绝对，采用误差eps
+        if (
+          Math.abs(list[i]['bounds']['bottom'] - list[j]['bounds']['bottom']) <
+            eps &&
+          list[i]['bounds']['left'] > list[j]['bounds']['left']
+        ) {
+          var tmp = list[i];
+          list[i] = list[j];
+          list[j] = tmp;
+        }
+      }
+    }
+    let res =[];
+    for (var i = 0; i < list.length; i++) {
+      res[i]= list[i]['text'];
+    }
+    list = null;
+    return res;
+}
+
 /**
  * @description: 华为文字识别
  * @return: 文字识别内容
