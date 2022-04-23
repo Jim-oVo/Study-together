@@ -15,6 +15,11 @@
     "label": "每日答题"
   },
   {
+    "name": "week",
+    "type": "checkbox",
+    "label": "每周答题"
+  },
+  {
     "name": "challenge",
     "type": "checkbox",
     "label": "挑战答题"
