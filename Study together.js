@@ -1179,6 +1179,133 @@ function challenge_loop(x){
         option.child(click_option).child(0).child(0).click();
     }
 }
+
+/**
+ * @description: 进入答题界面
+ * @author:Lejw
+ * @return:是否成功进入
+ */
+ function questionShow() {
+    while (!desc("工作").exists()) {
+        delay(1);
+        if(text("排行榜").exists()){
+            return ;
+        }
+    }
+    s.log("当前在主界面");
+    s.log("进入我要答题界面");
+    text("我的").click();
+    delay(1);
+    while (!desc("我的信息").exists()) {
+        delay(1);
+    }
+    text("我要答题").findOne().parent().click();
+    delay(1);
+    while(!text("排行榜").exists()){
+        delay(1);
+    }
+    delay(1);
+}
+/**
+ * @description: 查找每周答题入口
+ * @Author: Lejw
+ */
+function checkWeekEntry(){
+  let tryTime=10
+  while(tryTime) {
+    tryTime--;
+    delay(1);
+    if(text("未作答").exists()) {
+      s.log("进入答题")
+      text('未作答').findOne().parent().click();
+      return true;
+    }
+    gesture(500, [100, 1300], [100, 200])
+  }
+  s.log("没有未完成题目")
+  return false;
+}
+
+
+/**
+ * @description: 每周答题 - 单题
+ * @author:Lejw
+ */
+function click_week(){
+    var xxxxxxxxxx = '';
+    var click_true = false;
+    text("查看提示").findOne().click();
+  	delay(1);
+    var ansList=getAnsList();
+    back();
+    delay(1);
+    if(textContains('选题').exists()){
+      	var tips='';
+      	ansList.forEach(x=>{
+          tips+=x;
+        })
+        className("ListView").findOne().children().forEach(option=>{
+            if(tips.indexOf(option.child(0).child(2).text())!=-1){
+                xxxxxxxxxx+=option.child(0).child(2).text();
+                option.child(0).click();
+                click_true = true;
+            }
+        })
+        if(click_true == false){
+            className("ListView").findOne().child(0).child(0).click();
+        }
+        s.log('答案:'+xxxxxxxxxx);
+    }
+    else{
+				for(let i=0;i<ansList.length;i++) {
+          setText(i, ansList[i]);
+        }
+    }
+    delay(1);
+    text('确定').findOne().click();
+    delay(0.5);
+    if(text('下一题').exists()){
+        click('下一题');
+    }
+    if(text('完成').exists()){
+        click('完成');
+    }
+    delay(1);
+}
+
+
+/**
+ * @description: 每周答题
+ * @author:Lejw
+ */
+function week_Answer(){
+    if(week_num == 0 || !hamibot.env.week) return;
+    s.info('开始每周答题');
+		questionShow();
+    delay(1);
+    text('每周答题').findOne().parent().click();
+ 		delay(1);    
+  	if(!checkWeekEntry()) {//找不到能进去的题
+      s.log("每周答题结束")
+      back();
+      delay(1);
+      return;
+    }
+    delay(3);
+    while(true){
+        click_week();
+        if(text("返回").exists()){
+            delay(1);
+          	text("返回").click();
+          	delay(2);
+          	break;
+        }
+    }
+  	back();
+    s.info('每周答题结束');
+}
+
+
 /**
  * @description: 题目相似的查询
  * @param: question-题库题目，answer-题库答案，q文字识别内容，flag-字音
@@ -2217,7 +2344,7 @@ function main(){
     delay(1);
     get_all_num();
     delay(1);
-    var list = disorder([1,2,3,4,5,6,7,8]);
+    var list = disorder([1,2,3,4,5,6,7,8,9]);
     list.forEach(i=>{
         switch (i){
             case 1:
@@ -2243,6 +2370,9 @@ function main(){
                 break;
             case 8:
                 local_();
+                break;
+            case 9:
+                week_Answer();
                 break;
         }
         delay(2);
