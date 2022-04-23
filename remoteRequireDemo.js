@@ -75,7 +75,7 @@ m1.getAnsList=function() {
   var img = images.clip(captureScreen(),x,y,w,h);//裁切提示
   img=images.interval(img, "#FD1111", 60)//图片二值化
   images.save(img,'/sdcard/1.png')
-  var token=m1.get_baidu_token("OeHCGQEbB1BfHoriYI5Rc6gr","YIGl0GGrzDG93LgthDl4oflBXulLnRlE")
+  var token=m1.get_baidu_token("","")
   var ansList=m1.baidu_ocr_api_return_list(img,token)
   console.info(ansList)
   return ansList
