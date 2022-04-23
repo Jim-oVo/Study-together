@@ -782,6 +782,11 @@ var replace = null;
 var watchdog_time = hamibot.env.watchdog_time*1*1000;
 if(!watchdog_time) watchdog_time=2000*1000;
 /**
+ * @description: 百度ocr access_token
+ */
+var token="";
+
+/**
  * @description: 随机延迟
  * @param: seconds-延迟秒数[a,a+1]
  */
@@ -1021,7 +1026,7 @@ function study_video(){
 }
 
 /**
- * @description: 获取提示答案列表
+ * @description: 每周专项获取提示答案列表
  * @author:Lejw
  * @return:答案列表
  */
@@ -1045,7 +1050,7 @@ function study_video(){
         ansList=hamibot_ocr_api_return_list(img);
     } else {
         var token=get_baidu_token(hamibot.env.client_id,hamibot.env.client_secret);
-        ansList=baidu_ocr_api_return_list(img,token)
+        ansList=baidu_ocr_api_return_list(img,token);
     }
     s.info(ansList)
   }
@@ -1221,19 +1226,19 @@ function challenge_loop(x){
  * @Author: Lejw
  */
 function checkWeekEntry(){
-  let tryTime=10
-  while(tryTime) {
-    tryTime--;
-    delay(1);
-    if(text("未作答").exists()) {
-      s.log("进入答题")
-      text('未作答').findOne().parent().click();
-      return true;
+    let tryTime=10;
+    while(tryTime) {
+        tryTime--;
+        delay(1);
+        if(text("未作答").exists()) {
+        s.log("进入答题")
+        text('未作答').findOne().parent().click();
+        return true;
+        }
+        gesture(500, [100, 1300], [100, 200])
     }
-    gesture(500, [100, 1300], [100, 200])
-  }
-  s.log("没有未完成题目")
-  return false;
+    s.log("没有未完成题目");
+    return false;
 }
 
 
@@ -1267,7 +1272,7 @@ function click_week(){
         s.log('答案:'+xxxxxxxxxx);
     }
     else{
-				for(let i=0;i<ansList.length;i++) {
+		for(let i=0;i<ansList.length;i++) {
           setText(i, ansList[i]);
         }
     }
@@ -1289,12 +1294,12 @@ function click_week(){
  * @author:Lejw
  */
 function week_Answer(){
-    if(week_num == 0 || !hamibot.env.week) return;
+    if(week_num == 0 || !hamibot.env.week || token == "") return;
     s.info('开始每周答题');
-		questionShow();
+	questionShow();
     delay(1);
     text('每周答题').findOne().parent().click();
- 		delay(1);    
+ 	delay(1);    
   	if(!checkWeekEntry()) {//找不到能进去的题
       s.log("每周答题结束")
       back();
@@ -1754,13 +1759,13 @@ function do_contest_answer(depth_option, question1) {
                 var b = className('ListView').depth(29).findOne(3000).bounds();
                 img = images.clip(img, b.left, b.top, b.right-b.left, b.bottom-b.top);
                 if (choose == 'a') {
-                    old_question = huawei_ocr_api(img,token);
+                    old_question = huawei_ocr_api(img);
                 } else if (choose == 'b') {
                     old_question = ocr_api(img);
                 } else if (choose == 'c') {
                     old_question = hamibot_ocr_api(img,30,false);
                 }
-                else old_question = baidu_ocr_api(img,token);
+                else old_question = baidu_ocr_api(img);
                 console.log(old_question);
             }
             catch(e){
@@ -1936,31 +1941,6 @@ function questionShow() {
     delay(1);
 }
 
-
-/**
- * @description: 获取百度OCR_token
- * @return: access_token
- */
- function get_baidu_token(client_id,client_secret) {    // 百度ocr
-    var res = http.post(
-        'https://aip.baidubce.com/oauth/2.0/token',
-        {
-            grant_type: 'client_credentials',
-            client_id: client_id.replace(/ /g, ''),
-            client_secret: client_secret.replace(/ /g, '')
-        }
-    );
-    var xad = res.body.json()['access_token'];
-    if(xad == null){
-        s.error('百度文字识别（OCR）载入失败');
-        exit();
-    } else {
-        s.info('百度文字识别（OCR）载入成功');
-    }
-    return xad;
-}
-
-
 /**
  * @description: 百度文字识别
  * @return: 文字识别内容
@@ -1999,7 +1979,6 @@ function baidu_ocr_api(img) {
  */
  function baidu_ocr_api_return_list(img,token) {
     console.log('百度ocr文字识别中');
-    var answer = "";
     var res = http.post(
         'https://aip.baidubce.com/rest/2.0/ocr/v1/general',
         {
@@ -2018,14 +1997,12 @@ function baidu_ocr_api(img) {
         console.error('百度ocr文字识别失败:检查\n1.百度ocr欠费\n2.其他的错误');
         exit();
     }
-  	var ret=[]
+  	var ret=[];
     for (let i=0;i<words_list.length;i++) {
        ret[i]=words_list[i].words.replace(/\s*/g, "");
     }
-    return ret
+    return ret;
 }
-
-
 
 /**
  * @description: 获取百度OCR_token
@@ -2360,6 +2337,11 @@ function get_requestScreenCapture(){
         wait_num++;
     }
     s.info('截图权限获取完成');
+    if(choose == 'd' || hamibot.env.week){  // 获取百度OCR的token
+        if(hamibot.env.client_id&&hamibot.env.client_secret) {
+            token=get_baidu_token(hamibot.env.client_id,hamibot.env.client_secret)
+        }
+    }
 }
 /**
  * @description: 数组随机排序
@@ -2451,7 +2433,7 @@ function main(){
 function watchdog(){
     device.wakeUpIfNeeded();
     s.info('Study togther开始运行!!!');
-    if(hamibot.env.double||hamibot.env.four){
+    if(hamibot.env.double||hamibot.env.four || hamibot.env.week){
         get_requestScreenCapture();
         delay(1);
     }
@@ -2476,9 +2458,4 @@ function watchdog(){
     s.close();
     exit();
 }
-var token="";//百度ocr access_token
-if(hamibot.env.client_id&&hamibot.env.client_secret) {
-    token=get_baidu_token(hamibot.env.client_id,hamibot.env.client_secret)
-}
-
 watchdog();
