@@ -842,6 +842,8 @@ function get_all_num(){
     s.log('文章学习:'+article_num+'次');
     s.log('视频学习:'+video_num+'次');
     s.log('每日答题:'+daily_num+'次');
+    s.log('每周答题:'+week_num+'次');
+    s.log('专项答题:'+special_num+'次');
     s.log('挑战答题:'+challenge_num+'次');
     s.log('四人赛  :'+four_num+'次');
     s.log('双人对战:'+double_num+'次');
@@ -1052,10 +1054,80 @@ function study_video(){
         var token=get_baidu_token(hamibot.env.client_id,hamibot.env.client_secret);
         ansList=baidu_ocr_api_return_list(img,token);
     }
-    s.info(ansList)
+    retList =[];
+    if(ansList.length!=0) {//处理连续字符串换行合并
+        rawAns=ansField.text();
+        retList.push(ansList[0]);
+        for (let i=1;i<ansList.length;i++) {
+            str=ansList[i-1]+ansList[i]
+            if(rawAns.indexOf(str)!=-1) {
+                retList.push(retList.pop()+(ansList[i]));
+            }else {
+              retList.push(ansList[i]);
+            }
+    //       console.log(rawAns.lastIndexOf(str.substr(str.length-1,1)),rawAns.indexOf(ansList[i][0]))
+    // 			if(rawAns.lastIndexOf(str.substr(str.length-1,1))==rawAns.indexOf(ansList[i][0])-1) {
+    //       	retList.push(retList.pop()+(ansList[i]));
+    //       }else {
+    //         retList.push(ansList[i]);
+    //       }
+        }
+    }
+    return retList
   }
 
 
+/**
+ * @description: 获取专项提示答案列表
+ * @author:Lejw
+ * @return:答案列表
+ */
+ function getSpecialAnsList() {
+    auto.waitFor();
+    ansField=className("android.view.View").clickable(true).depth(22).indexInParent(0).findOne()
+    rawAns=ansField.text()
+    s.log(rawAns)
+    var ans=ansField.bounds()
+    var x=ans.left
+    var y=ans.top
+    var h=ans.bottom-ans.top
+    var w=ans.right-ans.left
+    s.log(x,y,h,w)
+    var img = images.clip(captureScreen(),x,y,w,h);//裁切提示
+    img=images.interval(img, "#FD1111", 60)//图片二值化
+    images.save(img,'/sdcard/1.png')
+    var ansLis=[]
+    if (choose == 'a') {
+      //TODO：HUAWEI_OCR 
+    } else if (choose == 'b') {
+      //TODO: THIRD_PARTY_OCR
+    } else if (choose == 'c') {
+      ansList=hamibot_ocr_api_return_list(img);
+    } else {
+      var token=get_baidu_token(hamibot.env.client_id,hamibot.env.client_secret);
+        ansList=baidu_ocr_api_return_list(img,token)
+    }
+    retList =[];
+    if(ansList.length!=0) {//处理连续字符串换行合并
+      retList.push(ansList[0]);
+      for (let i=1;i<ansList.length;i++) {
+        str=ansList[i-1]+ansList[i]
+        if(rawAns.indexOf(str)!=-1) {
+            retList.push(retList.pop()+(ansList[i]));
+        }else {
+          retList.push(ansList[i]);
+        }
+  //       console.log(rawAns.lastIndexOf(str.substr(str.length-1,1)),rawAns.indexOf(ansList[i][0]))
+  // 			if(rawAns.lastIndexOf(str.substr(str.length-1,1))==rawAns.indexOf(ansList[i][0])-1) {
+  //       	retList.push(retList.pop()+(ansList[i]));
+  //       }else {
+  //         retList.push(ansList[i]);
+  //       }
+      }
+    }
+    return retList
+  }
+  
 /**
  * @description: 每日答题 - 单题
  */
@@ -1195,6 +1267,53 @@ function challenge_loop(x){
     }
 }
 
+
+/**
+ * @description: 专项答题 - 单题
+ * @author:Lejw
+ */
+ function click_special(){
+    var xxxxxxxxxx = '';
+    var click_true = false;
+    text("查看提示").findOne().click();
+  	delay(1);
+    var ansList=getSpecialAnsList();
+    back();
+    delay(1);
+    if(textContains('选题').exists()){
+      	var tips='';
+      	ansList.forEach(x=>{
+          tips+=x;
+        })
+        className("ListView").findOne().children().forEach(option=>{
+            if(tips.indexOf(option.child(0).child(2).text())!=-1){
+                xxxxxxxxxx+=option.child(0).child(2).text();
+                option.child(0).click();
+                click_true = true;
+            }
+        })
+        if(click_true == false){
+            className("ListView").findOne().child(0).child(0).click();
+        }
+        s.log('答案:'+xxxxxxxxxx);
+    }
+    else{
+        for(let i=0;i<ansList.length;i++) {
+          setText(i, ansList[i]);
+        }
+    }
+    delay(0.5);
+    if(text('下一题').exists()){
+        click('下一题');
+    }
+    if(text('完成').exists()){
+        click('完成');
+    }
+    delay(1);
+}
+
+
+
 /**
  * @description: 进入答题界面
  * @author:Lejw
@@ -1241,6 +1360,32 @@ function checkWeekEntry(){
     return false;
 }
 
+/**
+ * @description: 查找专项答题入口
+ * @Author: Lejw
+ */
+ function checkSpecialEntry(){
+    let tryTime=10
+    while(tryTime) {
+      tryTime--;
+      delay(1);
+      if(text("开始答题").exists()) {
+        s.log("进入答题")
+        text('开始答题').findOne().click();
+        return true;
+      }
+      if(text("继续答题").exists()) {
+        s.log("继续答题")
+        text('继续答题').findOne().click();
+        return true;
+      }
+      gesture(500, [100, 1300], [100, 200])
+    }
+    s.log("没有未完成题目")
+    return false;
+  }
+  
+  
 
 /**
  * @description: 每周答题 - 单题
@@ -1318,6 +1463,38 @@ function week_Answer(){
     }
   	back();
     s.info('每周答题结束');
+}
+
+/**
+ * @description: 专项答题
+ * @author:Lejw
+ */
+ function special_Answer(){
+    if(special_num == 0 || !hamibot.env.special) return;
+    s.info('开始专项答题');
+		questionShow();
+    delay(1);
+    text('专项答题').findOne().parent().click();
+ 		delay(1);    
+  	if(!checkSpecialEntry()) {//找不到能进去的题
+      s.log("专项答题结束")
+      back();
+      delay(1);
+      return;
+    }
+    delay(3);
+    while(true){
+        click_special();
+        if(text("查看解析").exists()){
+            delay(1);
+            back();
+          	delay(1);
+            back();
+          	break;
+        }
+    }
+  	back();
+    s.info('每项答题结束');
 }
 
 
@@ -2387,7 +2564,7 @@ function main(){
     delay(1);
     get_all_num();
     delay(1);
-    var list = disorder([1,2,3,4,5,6,7,8,9]);
+    var list = disorder([1,2,3,4,5,6,7,8,9,10]);
     list.forEach(i=>{
         switch (i){
             case 1:
@@ -2417,6 +2594,9 @@ function main(){
             case 9:
                 week_Answer();
                 break;
+            case 10:
+                special_Answer();
+                break;
         }
         delay(2);
     })
@@ -2433,7 +2613,7 @@ function main(){
 function watchdog(){
     device.wakeUpIfNeeded();
     s.info('Study togther开始运行!!!');
-    if(hamibot.env.double||hamibot.env.four || hamibot.env.week){
+    if(hamibot.env.double||hamibot.env.four || hamibot.env.week || hamibot.env.special){
         get_requestScreenCapture();
         delay(1);
     }

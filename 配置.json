@@ -25,6 +25,11 @@
     "label": "挑战答题"
   },
   {
+    "name": "special",
+    "type": "checkbox",
+    "label": "专项答题"
+  },
+  {
     "name": "four",
     "type": "checkbox",
     "label": "四人赛"
