@@ -921,7 +921,7 @@ function study_article(){
                         if(standpoint_num>0){
                             s.info('开始发表观点');
                             try{
-                                var commit = text('观点').findOne().parent().parent().child(2).child(1).child(0).text();
+                                var commit = text('观点').findOne(3000).parent().parent().child(2).child(1).child(0).text();
                             }catch(e){
                                 var commit = commits[random(0,commits.length-1)];
                             }
@@ -2388,9 +2388,9 @@ function start_close_radio(flag){
     if(flag){
         s.info("正在打开广播");
         click('电台');
-        delay(1);
+        delay(2);
         click('听广播');
-        delay(1);
+        delay(2);
         var tmp = className('android.support.v7.widget.RecyclerView').findOne(5000);
         if(tmp){
             tmp.child(0).click();
@@ -2400,9 +2400,9 @@ function start_close_radio(flag){
     else{
         s.info("正在关闭广播");
         click('电台');
-        delay(1);
+        delay(2);
         click('听广播');
-        delay(1);
+        delay(2);
         var tmp = id('v_playing').findOne(5000);
         if(tmp){
             tmp.click();
