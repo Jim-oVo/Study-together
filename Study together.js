@@ -818,8 +818,10 @@ function get_all_num(){
         score[names] = Number(sx);
         if(arguments.length>=2){    // 返回分数情况->PushDeer
             texts += '%0A - '+names+':'+son.child(2).text().split("/")[0].match(/[0-9][0-9]*/g)+'/'+son.child(2).text().split("/")[1].match(/[0-9][0-9]*/g);
-            back_table();
-            if(i == list_view.childCount()-1) return texts;
+            if(i == list_view.childCount()-1){
+                back_table();
+                return texts;
+            } 
         }
     }
     video_num = 6-score['视听学习'];
@@ -2391,9 +2393,9 @@ function start_close_radio(flag){
         delay(2);
         click('听广播');
         delay(2);
-        var tmp = className('android.support.v7.widget.RecyclerView').findOne(5000);
+        var tmp = className('android.widget.FrameLayout').clickable(false).depth(22).drawingOrder(2).findOne(5000).bounds();
         if(tmp){
-            tmp.child(0).click();
+          press(tmp.centerX(), tmp.centerY(), 150);
         }
         tmp = null;
     }
