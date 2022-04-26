@@ -2391,9 +2391,9 @@ function start_close_radio(flag){
         delay(2);
         click('听广播');
         delay(2);
-        var tmp = className('android.support.v7.widget.RecyclerView').findOne(5000);
+        var tmp = className('android.widget.FrameLayout').clickable(false).depth(22).drawingOrder(2).findOne(5000).bounds();
         if(tmp){
-            tmp.child(0).click();
+          press(tmp.centerX(), tmp.centerY(), 150);
         }
         tmp = null;
     }
