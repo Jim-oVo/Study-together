@@ -818,8 +818,10 @@ function get_all_num(){
         score[names] = Number(sx);
         if(arguments.length>=2){    // 返回分数情况->PushDeer
             texts += '%0A - '+names+':'+son.child(2).text().split("/")[0].match(/[0-9][0-9]*/g)+'/'+son.child(2).text().split("/")[1].match(/[0-9][0-9]*/g);
-            back_table();
-            if(i == list_view.childCount()-1) return texts;
+            if(i == list_view.childCount()-1){
+                back_table();
+                return texts;
+            } 
         }
     }
     video_num = 6-score['视听学习'];
