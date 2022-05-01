@@ -798,8 +798,14 @@ function delay(a){
  */
 function get_all_num(){
     s.info('正在获取分数情况');
-    var score_id = id('comm_head_xuexi_score').findOne(5000);
-    score_id.click();
+    delay(1);
+    if (id("comm_head_xuexi_score").exists()) {
+        id("comm_head_xuexi_score").findOnce().click();
+    } else if (text("积分").exists()) {
+        text("积分").findOnce().parent().child(1).click();
+    }
+    // var score_id = id('comm_head_xuexi_score').findOne(5000);
+    // score_id.click();
     text('登录').waitFor();
     delay(1);
     var score = {};
@@ -1004,7 +1010,12 @@ function study_video(){
         while(video_num>0){
             s.info('当前第'+(7-video_num)+'篇');
             delay(2);
-            className('android.widget.FrameLayout').clickable(true).depth(22).findOnce(0).click();
+            try{
+                className('android.widget.FrameLayout').clickable(true).depth(22).findOnce(0).click();
+            }
+            catch(e){
+                className('android.widget.FrameLayout').clickable(true).depth(22).findOnce(1).click();
+            }
             delay(2);
             var t = video_s+random(0,5);
             for(var i = 0 ;i<t;){
@@ -1018,6 +1029,8 @@ function study_video(){
             }
             back();
             video_num --;
+            delay(1);
+            className("ListView").depth(21).findOne().scrollForward();
             delay(1);
             className("ListView").depth(21).findOne().scrollForward();
             delay(1);
@@ -1366,26 +1379,26 @@ function checkWeekEntry(){
  * @description: 查找专项答题入口
  * @Author: Lejw
  */
- function checkSpecialEntry(){
+function checkSpecialEntry(){
     let tryTime=10
     while(tryTime) {
-      tryTime--;
-      delay(1);
-      if(text("开始答题").exists()) {
-        s.log("进入答题")
-        text('开始答题').findOne().click();
-        return true;
-      }
-      if(text("继续答题").exists()) {
-        s.log("继续答题")
-        text('继续答题').findOne().click();
-        return true;
-      }
-      gesture(500, [100, 1300], [100, 200])
+        tryTime--;
+        delay(1);
+        if(text("开始答题").exists()) {
+            s.log("进入答题")
+            text('开始答题').findOne().click();
+            return true;
+        }
+        if(text("继续答题").exists()) {
+            s.log("继续答题")
+            text('继续答题').findOne().click();
+            return true;
+        } 
+        gesture(500, [100, 1300], [100, 200])
     }
     s.log("没有未完成题目")
     return false;
-  }
+}
   
   
 
@@ -2393,9 +2406,12 @@ function start_close_radio(flag){
         delay(2);
         click('听广播');
         delay(2);
-        var tmp = className('android.widget.FrameLayout').clickable(false).depth(22).drawingOrder(2).findOne(5000).bounds();
+        var tmp = desc('国家广播电台').depth(21).drawingOrder(1).findOne(5000);
         if(tmp){
-          press(tmp.centerX(), tmp.centerY(), 150);
+            tmp = tmp.parent().parent().parent().parent().child(1).child(0);
+            var t = random(0,tmp.childCount()-1)
+            tmp.child(t).click();
+            t = null;
         }
         tmp = null;
     }
@@ -2619,7 +2635,7 @@ function watchdog(){
         get_requestScreenCapture();
         delay(1);
     }
-    if(hamibot.env.double || hamibot.env.four || hamibot.challenge){
+    if(hamibot.env.double || hamibot.env.four || hamibot.env.challenge){
         init_question_list();
     }
     var thread = null;
