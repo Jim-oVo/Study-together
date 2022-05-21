@@ -1667,7 +1667,7 @@ function zsyAnswer() {
             if(text('访问异常').exists()){
                 var b = text('').depth(11).findOne(2000).bounds();
                 delay(1);
-                s.error('当前需要验证，本局不进行答题\等待答题结束中');
+                s.error('当前需要验证，本局不进行答题\n等待答题结束中');
                 gestures([0, random(400,1000), [b.centerX(), b.centerY()], [device.width, b.centerY()]]);
                 while (!text('继续挑战').exists()) {delay(1);s.log('等待答题结束')};
                 delay(1);
