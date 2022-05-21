@@ -1580,11 +1580,11 @@ function challenge(){
  */
 function init_question_list(){
     try{
-        var length = http.get('https://gitee.com/lctwelve/Peace/raw/master/length').body.string();
+        var length = http.get('http://www.lejiawei.xyz/length.txt').body.string();
         if(length.indexOf('?V')!=-1)
         if(!storage1.get(0)||storage1.get(0)!=length){
             s.info('题库有更新，更新题库中');
-            var tiku = http.get('https://gitee.com/lctwelve/Peace/raw/master/question.txt').body.string();
+            var tiku = http.get('http://www.lejiawei.xyz/question.txt').body.string();
             tiku = tiku.split('\n');
             storage1.clear();
             for(var i = 0 ;i<tiku.length;i++){
@@ -1661,6 +1661,20 @@ function zsyAnswer() {
             if(text("随机匹配").exists()||text("开始比赛").exists()){
                 break;
             }else return 0;
+        }
+        else{
+            delay(1);
+            if(text('访问异常').exists()){
+                var b = text('').depth(11).findOne(2000).bounds();
+                delay(1);
+                s.error('当前需要验证，本局不进行答题\等待答题结束中');
+                gestures([0, random(400,1000), [b.centerX(), b.centerY()], [device.width, b.centerY()]]);
+                while (!text('继续挑战').exists()) {delay(1);s.log('等待答题结束')};
+                delay(1);
+                click('继续挑战');
+                i = -1;
+                continue;
+            }
         }
         className("ListView").waitFor();
         var range = className("ListView").findOnce().parent().bounds();
