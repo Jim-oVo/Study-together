@@ -1207,6 +1207,12 @@ function click_daily(){
         click('完成');
     }
     delay(1);
+    if(text('访问异常').exists()){
+        var b = text('').depth(11).findOne(2000).bounds();
+        delay(1);
+        s.error('当前需要验证,正在过验证');
+        gestures([0, random(400,1000), [b.centerX(), b.centerY()], [device.width, b.centerY()]]);
+    }
 }
 /**
  * @description: 每日答题
@@ -1280,6 +1286,7 @@ function challenge_loop(x){
         }
         option.child(click_option).child(0).child(0).click();
     }
+    
 }
 
 
@@ -1325,6 +1332,12 @@ function challenge_loop(x){
         click('完成');
     }
     delay(1);
+    if(text('访问异常').exists()){
+        var b = text('').depth(11).findOne(2000).bounds();
+        delay(1);
+        s.error('当前需要验证,正在过验证');
+        gestures([0, random(400,1000), [b.centerX(), b.centerY()], [device.width, b.centerY()]]);
+    }
 }
 
 
@@ -1446,6 +1459,12 @@ function click_week(){
         click('完成');
     }
     delay(1);
+    if(text('访问异常').exists()){
+        var b = text('').depth(11).findOne(2000).bounds();
+        delay(1);
+        s.error('当前需要验证,正在过验证');
+        gestures([0, random(400,1000), [b.centerX(), b.centerY()], [device.width, b.centerY()]]);
+    }
 }
 
 
@@ -1560,6 +1579,13 @@ function challenge(){
         delay(0.5);
         if (text('wrong@3x.9ccb997c').exists() || text('2kNFBadJuqbAAAAAElFTkSuQmCC').exists() || text("v5IOXn6lQWYTJeqX2eHuNcrPesmSud2JdogYyGnRNxujMT8RS7y43zxY4coWepspQkvw" + "RDTJtCTsZ5JW+8sGvTRDzFnDeO+BcOEpP0Rte6f+HwcGxeN2dglWfgH8P0C7HkCMJOAAAAAElFTkSuQmCC").exists()){
             text('结束本局').findOne().click();
+            delay(2);
+            if(text('访问异常').exists()){
+                var b = text('').depth(11).findOne(2000).bounds();
+                delay(1);
+                s.error('当前需要验证,正在过验证');
+                gestures([0, random(400,1000), [b.centerX(), b.centerY()], [device.width, b.centerY()]]);
+            }
             if(xxxxx>=6){
                 text('再来一局').waitFor();
                 back();
@@ -1669,7 +1695,7 @@ function zsyAnswer() {
                 delay(1);
                 s.error('当前需要验证，本局不进行答题\n等待答题结束中');
                 gestures([0, random(400,1000), [b.centerX(), b.centerY()], [device.width, b.centerY()]]);
-                while (!text('继续挑战').exists()) {delay(1);s.log('等待答题结束')};
+                while (!text('继续挑战').exists()) {delay(2);s.log('等待答题结束')};
                 delay(1);
                 click('继续挑战');
                 i = -1;
@@ -2596,7 +2622,8 @@ function main(){
     delay(1);
     get_all_num();
     delay(1);
-    var list = disorder([1,2,3,4,5,6,7,8,9,10]);
+    var list = disorder([1,2,3,4,6,7,8,9,10]);
+    list.unshift(5);                // 第一轮直接四人赛,过验证;
     list.forEach(i=>{
         switch (i){
             case 1:
