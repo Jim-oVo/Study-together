@@ -2660,6 +2660,7 @@ function watchdog(){
         delay(2);
     }
     toastLog("已经重新运行了多次，脚本结束");
+    question_list = null;
     thread = null;
     s.close();
     exit();
