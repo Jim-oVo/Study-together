@@ -376,8 +376,7 @@ control.addView = function(data) {
     }
     ui.run(() => {
         let view = ui.inflate(
-            <text layout_gravity="center" padding="0"
-                        marginBottom="0px" />, this.window.content, false);
+            '<text layout_gravity="center" padding="0" marginBottom="0px" />', this.window.content, false);
         view.setText(text);
         view.setTextColor(colors.parseColor(color));
         view.setTextSize(this.textSize || 13);
@@ -407,30 +406,28 @@ control.clear = function(s) {
     }, s || 20);
 }
 
-
-function createWindow() {
-    let window = floaty.rawWindow(
-        '<frame id="vi" w="*" h="*"  padding="0 0 0 0" >\
-            <LinearLayout layout_width="match_parent" layout_height="match_parent" orientation="vertical">\
-                <LinearLayout padding="10 5 10 5" id="bart" bg="#ee000011" w="*" h="auto" margin="0" >\
-                    <text id="bear" text="log" textColor="#ffffff" layout_weight="1" />\
-                    <text w="auto" textColor="#FFFFFF" id="exit" text="退出" padding="0" margin="0" />\
-                </LinearLayout>\
-                <ScrollView id="scroll" padding="0" margin="0" layout_weight="1">\
-                    <LinearLayout padding="2 0 2 0" id="content"  orientation="vertical">\
-                    </LinearLayout>\
-                </ScrollView>\
+let window = floaty.rawWindow(
+    '<frame id="vi" w="*" h="*"  padding="0 0 0 0" >\
+        <LinearLayout layout_width="match_parent" layout_height="match_parent" orientation="vertical">\
+            <LinearLayout padding="10 5 10 5" id="bart" bg="#ee000011" w="*" h="auto" margin="0" >\
+                <text id="bear" text="log" textColor="#ffffff" layout_weight="1" />\
+                <text w="auto" textColor="#FFFFFF" id="exit" text="退出" padding="0" margin="0" />\
             </LinearLayout>\
-        </frame>'
-    );
+            <ScrollView id="scroll" padding="0" margin="0" layout_weight="1">\
+                <LinearLayout padding="2 0 2 0" id="content"  orientation="vertical">\
+                </LinearLayout>\
+            </ScrollView>\
+        </LinearLayout>\
+    </frame>'
+);
 
-    window.exit.on('click', function() {
-        window.close();
-        toastLog('脚本结束');
-        question_list = null;
-        exit();
-    });
-   
+window.exit.on('click', function() {
+    window.close();
+    toastLog('脚本结束');
+    question_list = null;
+    exit();
+});
+ui.run(()=>{
     shape.withGradientDrawable(context)
         .setColor("#cc000000")
         .setCornerRadii([20, 20, 20, 20, 20, 20, 20, 20])
@@ -447,6 +444,8 @@ function createWindow() {
         .setStrokeWidth(2)
         .setCornerRadius(30)
         .setOrientation("tl_br");
+});
+function createWindow() {
     let control = Object.create(createWindow.prototype);
     control.window = window;
     control.viewArr = [];
@@ -668,12 +667,12 @@ if(!article_s) article_s = 45;
 /**
  * @description: 文章学习篇数
  */
-var article_num = 2;
+var article_num = 1;
 
 /**
  * @description: 视频学习篇数
  */
-var video_num = 2;
+var video_num = 1;
 
 /**
  * @description: 每日答题次数
@@ -695,6 +694,8 @@ var special_num = 1;
  */
 var challenge_num = 1;
 
+var challenge_loop_num = hamibot.env.challenge_loop_num;
+if(!challenge_loop_num || challenge_loop_num <=0) challenge_loop_num = 5;
 /**
  * @description: 四人赛答题次数
  */
@@ -713,7 +714,7 @@ var sub_num = 2;
 /**
  * @description: 分享次数
  */
-var share_num = 2;
+var share_num = 0;
 
 /**
  * @description: 评论观点次数
@@ -809,14 +810,22 @@ function get_all_num(){
     } else if (text("积分").exists()) {
         text("积分").findOnce().parent().child(1).click();
     }
+    delay(1);
+    if(text('知道了').exists()){
+        text('知道了').click();
+    }
     // var score_id = id('comm_head_xuexi_score').findOne(5000);
     // score_id.click();
     text('登录').waitFor();
     delay(1);
     var score = {};
     var list_view = className("android.widget.ListView").findOne(5000);
+    var texts = "";
     if(arguments.length>=2){    // 返回分数情况->PushDeer
-        var texts = textContains("今日已累积").findOne().text();
+        try{
+            texts += "成长总积分:"+text('成长总积分').depth(21).findOne(1000).parent().child(3).text() + "%0A";
+        }catch(e){}
+        texts += textContains("今日已累积").findOne().text();
     }
     for(var i = 0;i<list_view.childCount();i++){
         var son = list_view.child(i);
@@ -845,13 +854,13 @@ function get_all_num(){
     daily_num = (5-score['每日答题'])?1:0;
     week_num = score['每周答题']?0:1;
     special_num = score['专项答题']?0:1;
-    challenge_num = (6-score['挑战答题'])?1:0;
+    challenge_num = (5-score['挑战答题'])?1:0;
     four_num = score['四人赛']?0:1;
     double_num = score['双人对战']?0:1;
     sub_num = 2 - score['订阅'];
     standpoint_num = 1-score['发表观点'];
     local_num = 1 - score['本地频道'];
-    share_num = score['分享']?0:2;
+    // share_num = score['分享']?0:2;
     s.log('文章学习:'+article_num+'次');
     s.log('视频学习:'+video_num+'次');
     s.log('每日答题:'+daily_num+'次');
@@ -920,9 +929,9 @@ function study_article(){
                             var tmp = Math.random();
                             try{
                                 if(tmp>0.9){
-                                    swipe(device.width/2+Math.random()*100,3*device.height/4+Math.random()*100,device.width/2-Math.random()*100,device.height/4,Math.random()*1000);
+                                    swipe(3*device.width/4+Math.random()*100,3*device.height/4+Math.random()*100,3*device.width/4-Math.random()*100,device.height/4,Math.random()*1000);
                                 }else if(tmp < 0.1){
-                                    swipe(device.width/2-Math.random()*100,device.height/4+Math.random()*100,device.width/2,3*device.height/4-Math.random()*100,Math.random()*1000);
+                                    swipe(4*device.width/4-Math.random()*100,device.height/4+Math.random()*100,3*device.width/4,3*device.height/4-Math.random()*100,Math.random()*1000);
                                 }
                             }catch(e){}
                             i++;
@@ -981,6 +990,7 @@ function study_article(){
     }
     s.info('文章学习完成');
     start_close_radio(false);
+    delay(2);
 }
 /**
  * @description: 本地频道
@@ -997,13 +1007,14 @@ function local_(){
     delay(2);
     back();
     s.info('本地频道完成');
+    delay(2);
 }
 /**
  * @description: 视频学习
  */
 function study_video(){
     if(video_num == 0 || !hamibot.env.video) return;
-    s.info('正在视频学习');
+    s.info('开始视频学习');
     back_table();
     s.warn('还需学习'+(video_num)+'篇视频');
     delay(2);
@@ -1045,6 +1056,7 @@ function study_video(){
         get_all_num();
     }
     s.info('视频学习完成');
+    delay(2);
 }
 
 /**
@@ -1223,12 +1235,16 @@ function daily_Answer(){
     delay(1);
     text('每日答题').findOne().parent().click();
     delay(3);
+    var x = 0;
     while(true){
         click_daily();
-        if(text("再来一组").exists()){
+        x++;
+        if(x>=5){
+            text("再来一组").waitFor()
             delay(3);
             if (!text("领取奖励已达今日上限").exists()) {
                 s.warn('积分未满，再答一次');
+                x=0;
                 text("再来一组").click();
                 delay(2);
             }else {
@@ -1239,6 +1255,7 @@ function daily_Answer(){
         }
     }
     s.info('每日答题结束');
+    delay(2);
 }
 /**
  * @description: 挑战 单题答题
@@ -1347,8 +1364,7 @@ function challenge_loop(x){
             return ;
         }
     }
-    s.log("当前在主界面");
-    s.log("进入我要答题界面");
+    s.log("进入答题界面");
     text("我的").click();
     delay(1);
     while (!desc("我的信息").exists()) {
@@ -1371,11 +1387,11 @@ function checkWeekEntry(){
         tryTime--;
         delay(1);
         if(text("未作答").exists()) {
-        s.log("进入答题")
-        text('未作答').findOne().parent().click();
-        return true;
+            s.log("进入答题");
+            text('未作答').findOne().parent().click();
+            return true;
         }
-        gesture(500, [100, 1300], [100, 200])
+        gesture(500, [100, 1300], [100, 200]);
     }
     s.log("没有未完成题目");
     return false;
@@ -1391,16 +1407,16 @@ function checkSpecialEntry(){
         tryTime--;
         delay(1);
         if(text("开始答题").exists()) {
-            s.log("进入答题")
+            s.log("进入答题");
             text('开始答题').findOne().click();
             return true;
         }
         if(text("继续答题").exists()) {
-            s.log("继续答题")
+            s.log("继续答题");
             text('继续答题').findOne().click();
             return true;
         } 
-        gesture(500, [100, 1300], [100, 200])
+        gesture(500, [100, 1300], [100, 200]);
     }
     s.log("没有未完成题目")
     return false;
@@ -1423,7 +1439,7 @@ function click_week(){
     if(textContains('选题').exists()){
       	var tips='';
       	ansList.forEach(x=>{
-          tips+=x;
+            tips+=x;
         })
         className("ListView").findOne().children().forEach(option=>{
             if(tips.indexOf(option.child(0).child(2).text())!=-1){
@@ -1467,7 +1483,7 @@ function week_Answer(){
     text('每周答题').findOne().parent().click();
  	delay(1);    
   	if(!checkWeekEntry()) {//找不到能进去的题
-      s.log("每周答题结束")
+      s.log("每周答题结束");
       back();
       delay(1);
       return;
@@ -1484,6 +1500,7 @@ function week_Answer(){
     }
   	back();
     s.info('每周答题结束');
+    delay(2);
 }
 
 /**
@@ -1493,12 +1510,12 @@ function week_Answer(){
  function special_Answer(){
     if(special_num == 0 || !hamibot.env.special) return;
     s.info('开始专项答题');
-		questionShow();
+	questionShow();
     delay(1);
     text('专项答题').findOne().parent().click();
- 		delay(1);    
+ 	delay(1);    
   	if(!checkSpecialEntry()) {//找不到能进去的题
-      s.log("专项答题结束")
+      s.log("专项答题结束");
       back();
       delay(1);
       return;
@@ -1516,6 +1533,7 @@ function week_Answer(){
     }
   	back();
     s.info('每项答题结束');
+    delay(2);
 }
 
 
@@ -1565,10 +1583,12 @@ function challenge(){
         challenge_loop(xxxxx);
         delay(0.5);
         if (text('wrong@3x.9ccb997c').exists() || text('2kNFBadJuqbAAAAAElFTkSuQmCC').exists() || text("v5IOXn6lQWYTJeqX2eHuNcrPesmSud2JdogYyGnRNxujMT8RS7y43zxY4coWepspQkvw" + "RDTJtCTsZ5JW+8sGvTRDzFnDeO+BcOEpP0Rte6f+HwcGxeN2dglWfgH8P0C7HkCMJOAAAAAElFTkSuQmCC").exists()){
+            delay(1);
             text('结束本局').findOne().click();
             delay(2);
-            if(xxxxx>=6){
+            if(xxxxx>challenge_loop_num){
                 text('再来一局').waitFor();
+                delay(1);
                 back();
                 break;
             }
@@ -1581,39 +1601,29 @@ function challenge(){
         else{xxxxx++;}
     }
     s.info('挑战答题结束');
+    delay(2);
 }
 /**
  * @description: 题库提取到questi_list
  */
 function init_question_list(){
-    try{
-        var length = http.get('http://www.lejiawei.xyz/length.txt').body.string();
-        if(length.indexOf('?V')!=-1)
-        if(!storage1.get(0)||storage1.get(0)!=length){
-            s.info('题库有更新，更新题库中');
-            var tiku = http.get('http://www.lejiawei.xyz/question.txt').body.string();
-            tiku = tiku.split('\n');
-            storage1.clear();
-            for(var i = 0 ;i<tiku.length;i++){
-                var x = i+1;
-                var q = tiku[i].split('=');
-                storage1.put(x,q);
-            }
-            storage1.put(0,length);
-            s.info('题库更新完成');
-            tiku = null;
+    var path = "/sdcard/question_tiku.txt";
+    if(!files.exists(path)){
+        s.error('题库文件不存在，3s后自动退出脚本');
+        delay(3);
+        s.close();
+        exit();
+    }
+    var tiku = files.read(path);
+    tiku = tiku.split('\n');
+    for(var i = 0; i<=tiku.length;i++){
+        if(tiku[i]){
+            question_list.push(tiku[i].split('='));
         }
-    }catch(e){
-        s.error('题库更新失败');
     }
     try{
         eval(http.get('https://gitee.com/lctwelve/Peace/raw/master/replace.txt').body.string());
     }catch(e){};
-    length = Number(storage1.get(0).split('?')[0]);
-    for(var i = 1 ; i<=length;i++){
-        question_list.push(storage1.get(i));
-    }
-    length = null;
 }
 /**
  * @description: 四人/双人对战
@@ -1627,8 +1637,8 @@ function zsyAnswer() {
             threshold: 10,
         });
     }catch(e){
-        console.error(e);
         s.info('你可能使用了模拟器并且hamibot的版本是1.3.0及以上，请使用hamibot1.1.0版本');
+        delay(3);
         exit();
     }
     if (choose == 'a') {
@@ -1684,7 +1694,7 @@ function zsyAnswer() {
                     threshold: 10,
                 });
             } while (!point);
-            console.time('答题');
+            if(!yinzi) console.time('答题');
             try{
                 range = className("ListView").findOnce().parent().bounds();
                 // if (choose == 'a') img = images.inRange(img, '#000000', '#444444');
@@ -1726,7 +1736,7 @@ function zsyAnswer() {
                 }
             } else {
                 images.save(img, "/sdcard/截图.jpg", "jpg", 50);
-                console.error("没有识别出任何内容，为了查错已经将截图保存在根目录./截图.jpg，如果截图正常并使用的是本地ocr，那么当前你的手机可能并不适配该ocr，百度/华为ocr则检查扣费次数情况");
+                s.error("没有识别出任何内容，为了查错已经将截图保存在根目录./截图.jpg");
                 console.log('截图坐标为(' + x + ',' + y + '),(' + dx + ',' + dy + ')');
                 break;
             }
@@ -2103,6 +2113,7 @@ function four(){
     text("排行榜").findOne().parent().child(8).click();
     delay(1);
     zsyAnswer();
+    delay(2);
 }
 /**
  * @description: 双人对战
@@ -2114,6 +2125,7 @@ function double(){
     text("排行榜").findOne().parent().child(9).click();
     delay(1);
     zsyAnswer();
+    delay(2);
 }
 /**
  * @description: 进入答题界面
@@ -2125,7 +2137,6 @@ function questionShow() {
             return ;
         }
     }
-    s.log("当前在主界面");
     s.log("进入我要答题界面");
     text("我的").click();
     delay(1);
@@ -2176,7 +2187,7 @@ function baidu_ocr_api(img) {
  * @author:Lejw
  * @return: 文字识别内容
  */
- function baidu_ocr_api_return_list(img,token) {
+function baidu_ocr_api_return_list(img,token) {
     console.log('百度ocr文字识别中');
     var res = http.post(
         'https://aip.baidubce.com/rest/2.0/ocr/v1/general',
@@ -2207,24 +2218,26 @@ function baidu_ocr_api(img) {
  * @description: 获取百度OCR_token
  * @return: access_token
  */
- function get_baidu_token(client_id,client_secret) {    // 百度ocr
+function get_baidu_token(client_id,client_secret) {    // 百度ocr
     var res = http.post(
         'https://aip.baidubce.com/oauth/2.0/token',
         {
             grant_type: 'client_credentials',
-            client_id: client_id.replace(/ /g, ''),
-            client_secret: client_secret.replace(/ /g, '')
+            client_id: client_id,
+            client_secret: client_secret
         }
     );
     var xad = res.body.json()['access_token'];
     if(xad == null){
-        console.error('百度文字识别（OCR）载入失败');
+        s.error('百度文字识别（OCR）载入失败');
+        delay(3);
         exit();
     } else {
-        console.info('百度文字识别（OCR）载入成功');
+        s.info('百度文字识别（OCR）载入成功');
     }
     return xad;
 }
+var ocr;
 /**
  * @description: 第三方浩然文字识别
  * @return: 文字识别内容
@@ -2240,8 +2253,9 @@ function ocr_api(img) {
         }
         return answer.replace(/\s*/g, "");
     }catch(e){
-        console.error(e);
-        console.info("第三方OCR插件安装错了位数，分为64位和32位\n卸载之前的插件，换一个位数安装");
+        s.error(e);
+        s.info("第三方OCR插件安装错了位数，分为64位和32位\n卸载之前的插件，换一个位数安装");
+        delay(3);
         exit();
     }
 }
@@ -2517,6 +2531,14 @@ function get2_requestScreenCapture(){
         }catch(e){}
     })
 }
+function getVersion(package_name) {         // 得到包名的版本
+    let pkgs = context.getPackageManager().getInstalledPackages(0).toArray();
+    for (let i in pkgs) {
+        if (pkgs[i].packageName.toString() === package_name) {
+            return pkgs[i].versionName;
+        }
+    }
+}
 /**
  * @description: 进入hamibot界面获取截图权限(更稳定)
  */
@@ -2539,9 +2561,34 @@ function get_requestScreenCapture(){
         wait_num++;
     }
     s.info('截图权限获取完成');
-    if(choose == 'd' || hamibot.env.week){  // 获取百度OCR的token,在hamibot内获取
+    if(choose == 'd'){  // 获取百度OCR的token,在hamibot内获取
         if(hamibot.env.client_id&&hamibot.env.client_secret) {
             token=get_baidu_token(hamibot.env.client_id,hamibot.env.client_secret);
+        }
+        else{
+            s.error('未填写百度OCR配置！！！');
+            delay(3);
+            exit();
+        }
+    }
+    else if(choose == 'b'){
+        try{
+            ocr = plugins.load("com.hraps.ocr");
+        }
+        catch(e){
+            s.error('第三方OCR插件未安装');
+            delay(3);
+            s.close();
+            exit();
+        }
+    }
+    else if(choose == 'c'){
+        var version = getVersion('com.hamibot.hamibot');
+        if(version<'1.3.0'){
+            s.error('Hamibot版本过低');
+            delay(3);
+            s.close();
+            exit();
         }
     }
 }
@@ -2564,16 +2611,24 @@ function disorder(arr){
  */
 function PushDeer(){
     if(!hamibot.env.key||hamibot.env.key=='') return;
+    s.info('开始获取当天积分情况');
     back_table();
     var texts = get_all_num(1,1);
-    http.get('https://api2.pushdeer.com/message/push?pushkey='+hamibot.env.key.replace(/ /g,"")+'&text='+texts+'&type=markdown');
+    try{
+        s.info('开始发送推送信息,请等待...');
+        log(http.get(hamibot.env.key.replace(/这是推送内容不要删除/g,texts)).body.string());
+    }
+    catch(e){
+        s.error('推送请求失败，自己琢磨原因');
+    }
+    s.info('推送完成');
     texts = null;
 }
 /**
  * @description: 主函数
  */
 function main(){
-    device.keepScreenOn(60*60*1000);// 设置亮屏一小时
+    device.keepScreenOn(24*60*60*1000);// 设置亮屏
     s.info('启动xxqg');
     launchApp("学习强国") || launch('cn.xuexi.android');
     while(!desc('工作').exists()){
@@ -2588,9 +2643,10 @@ function main(){
     }
     delay(1);
     get_all_num();
+    // double_num=1;
+    // daily_num=1;
     delay(1);
     var list = disorder([1,2,3,4,5,6,7,8,9,10]);
-    // list.unshift(5);                // 第一轮直接四人赛,过验证;
     list.forEach(i=>{
         switch (i){
             case 1:
@@ -2624,10 +2680,21 @@ function main(){
                 special_Answer();
                 break;
         }
-        delay(2);
     })
     device.cancelKeepingAwake();    // 取消屏幕常亮
+    PushDeer();
     back_table();
+    delay(1);
+    if(hamibot.env.end){
+        s.info('正在执行自定义结束代码');
+        try{
+            eval(hamibot.env.end);
+            s.info('自定义代码执行完成');
+        }
+        catch(e){
+            s.error('自定义代码有错误,跳过!!!');
+        }
+    }
     s.info('脚本运行结束，3s后自动退出');
     delay(3);
     s.close();
@@ -2639,6 +2706,17 @@ function main(){
 function watchdog(){
     device.wakeUpIfNeeded();
     s.info('Study togther开始运行!!!');
+    s.error('脚本为免费脚本！！！');
+    if(hamibot.env.head){
+        s.info('正在执行自定义开始代码');
+        try{
+            eval(hamibot.env.head);
+            s.info('自定义代码执行完成');
+        }
+        catch(e){
+            s.error('自定义代码有错误,跳过!!!');
+        }
+    }
     if(hamibot.env.double||hamibot.env.four || hamibot.env.week || hamibot.env.special){
         get_requestScreenCapture();
         delay(1);
@@ -2669,18 +2747,22 @@ threads.start(function(){
     while(true){
         try{
             if(text('访问异常').exists()){
-                var b = text('').depth(11).findOne(2000).bounds();
+                var b = textContains("向右滑动验证").findOne(2000).parent().child(2).bounds();;
                 delay(1);
                 s.error('当前需要验证，正在过验证');
                 gestures([0, random(400,1000), [b.centerX(), b.centerY()], [device.width, b.centerY()]]);
-                captcha = true;
                 delay(2);
-                break;
+                if(text('刷新').exists()){
+                    text('刷新').findOne(1000).parent().click();
+                }
+                else break;
             }
             delay(2);
         }
         catch(e){}
     }
     s.error('验证通过');
+    captcha = true;
 })
+
 watchdog();
