@@ -1,0 +1,114 @@
+[
+    {
+      "name": "article",
+      "type": "checkbox",
+      "label": "文章学习"
+    },
+    {
+      "name": "video",
+      "type": "checkbox",
+      "label": "视频学习"
+    },
+    {
+      "name": "day",
+      "type": "checkbox",
+      "label": "每日答题"
+    },
+    {
+      "name": "challenge",
+      "type": "checkbox",
+      "label": "挑战答题"
+    },
+    {
+      "name": "four",
+      "type": "checkbox",
+      "label": "四人赛"
+    },
+    {
+      "name": "double",
+      "type": "checkbox",
+      "label": "双人对战"
+    },
+    {
+      "name": "local",
+      "type": "checkbox",
+      "label": "本地频道"
+    },
+    {
+      "name": "article_s",
+      "type": "number",
+      "label": "每篇文章学习秒数-s",
+      "placeholder": "45"
+    },
+    {
+      "name": "video_s",
+      "type": "number",
+      "label": "每篇视频学习秒数-s",
+      "placeholder": "6"
+    },
+    {
+      "name": "delay_time",
+      "type": "number",
+      "label": "四人/双人每题答题延迟毫秒数-ms",
+      "placeholder": "0"
+    },
+    {
+      "name": "another",
+      "type": "number",
+      "label": "四人/双人额外的乱答次数",
+      "placeholder": "0"
+    },
+    {
+      "name": "choose",
+      "type": "select",
+      "label": "文字识别(OCR)类型选择",
+      "options": {
+        "c": "hamibot内置OCR->推荐",
+        "d": "百度OCR接口,需要填入以下关于百度的内容",
+        "b": "第三方OCR插件,需要安装第三方插件"
+      }
+    },
+    {
+      "name": "client_id",
+      "type": "text",
+      "label": "百度OCR的API Key"
+    },
+    {
+      "name": "client_secret",
+      "type": "text",
+      "label": "百度OCR的Secret Key"
+    },
+    {
+      "name": "challenge_loop_num",
+      "type": "number",
+      "label": "挑战答题答题正确次数",
+      "placeholder": "5"
+    },
+    {
+      "name": "watchdog_time",
+      "type": "number",
+      "label": "看门狗设置时长秒-s",
+      "placeholder": "2000"
+    },
+    {
+      "name": "key",
+      "type": "textarea",
+      "label": "自定义推送链接",
+      "placeholder": "例子内容只需修改 （写入你的token）",
+      "help": "pushplus的例子：http://www.pushplus.plus/send?token=写入你的token&title=Study&content=这是推送内容不要删除&template=markdown"
+    },
+    {
+      "name": "head",
+      "type": "textarea",
+      "label": "Study运行前执行的代码",
+      "placeholder": "不懂不要动",
+      "help": ""
+    },
+    {
+      "name": "end",
+      "type": "textarea",
+      "label": "Study运行结束后执行的代码",
+      "placeholder": "不懂不要动",
+      "help": ""
+    }
+  ]
