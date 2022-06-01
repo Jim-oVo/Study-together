@@ -2560,6 +2560,7 @@ function get_requestScreenCapture(){
         }
         wait_num++;
     }
+    wait_num = null;
     s.info('截图权限获取完成');
     if(choose == 'd'){  // 获取百度OCR的token,在hamibot内获取
         if(hamibot.env.client_id&&hamibot.env.client_secret) {
