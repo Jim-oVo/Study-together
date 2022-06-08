@@ -1430,32 +1430,6 @@ function challenge_loop(x){
 }
 
 
-
-/**
- * @description: 进入答题界面
- * @author:Lejw
- * @return:是否成功进入
- */
- function questionShow() {
-    while (!desc("工作").exists()) {
-        delay(1);
-        if(text("排行榜").exists()){
-            return ;
-        }
-    }
-    s.log("进入答题界面");
-    text("我的").click();
-    delay(1);
-    while (!desc("我的信息").exists()) {
-        delay(1);
-    }
-    text("我要答题").findOne().parent().click();
-    delay(1);
-    while(!text("排行榜").exists()){
-        delay(1);
-    }
-    delay(1);
-}
 /**
  * @description: 查找每周答题入口
  * @Author: Lejw
@@ -2213,7 +2187,7 @@ function questionShow() {
             return ;
         }
     }
-    s.log("进入我要答题界面");
+    s.log("进入答题界面");
     text("我的").click();
     delay(1);
     while (!desc("我的信息").exists()) {
