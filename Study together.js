@@ -785,6 +785,7 @@ replace = function(answers){
     if(answers.indexOf('放松活动')!=-1&&answers.indexOf('基本活动')!=-1) answers = answers.replace(/一/g, "");
     if(answers.indexOf('辑拿')!=-1&&answers.indexOf('绳拿')!=-1) answers = answers.replace(/绳拿/g, "缉拿");
     if(answers.indexOf('黄海')!=-1&&answers.indexOf('潮海')!=-1) answers = answers.replace(/潮海/g, "渤海");
+    answers = answers.replace(/祖击手/g, "狙击手");
     answers = answers.replace(/姓款/g, "账款");
     answers = answers.replace(/对筹公堂/g, "对簿公堂");
     answers = answers.replace(/嘎岭/g, "嘌呤");
@@ -2809,6 +2810,10 @@ threads.start(function(){
                 else break;
             }
             delay(2);
+            if(text('重试').exists()){
+                s.info('点击重试');
+                text('重试').findOne(1000).click();
+            }
         }
         catch(e){}
     }
