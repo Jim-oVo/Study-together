@@ -1663,7 +1663,7 @@ function challenge(){
 function init_question_list(){
     var path = "/sdcard/question_tiku.txt";
     if(!files.exists(path)){
-        s.error('题库文件不存在，3s后自动退出脚本');
+        s.error('题库文件不存在,仔细查看脚本介绍\n3s后自动退出脚本');
         delay(3);
         s.close();
         exit();
@@ -2750,6 +2750,7 @@ function main(){
     s.info('脚本运行结束，3s后自动退出');
     delay(3);
     s.close();
+    question_list = null;
     exit();
 }
 /**
