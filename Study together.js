@@ -2807,6 +2807,9 @@ threads.start(function(){
                 delay(2);
                 if(text('刷新').exists()){
                     text('刷新').findOne(1000).parent().click();
+                    if(text('icon/24/icon_Y_shuaxin').exists()){
+                        text('icon/24/icon_Y_shuaxin').findOne(1000).parent().click();
+                    }
                 }
                 else break;
             }
