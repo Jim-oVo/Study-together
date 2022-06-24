@@ -347,8 +347,8 @@ const control = createWindow.prototype;
 control.viewArr = [];
 control.x = 0;
 control.y = 0;
-control.w = 600;
-control.h = device.height*0.2;
+control.w = Math.floor(device.width*0.5);
+control.h = Math.floor(device.height*0.2);
 control.i = 100;
 control.setPosition = function(x, y) {
     this.window.setPosition(x, y);
@@ -1342,7 +1342,7 @@ function daily_Answer(){
  */
 function challenge_loop(x){
     yinzi = false;
-    if(x>5){
+    if(x>challenge_loop_num){
         s.info('答题次数已满，随机点击');
         var tmp = className("ListView").findOne().childCount();
         className("ListView").findOne().child(random(0,tmp-1)).child(0).child(0).click();
@@ -1450,7 +1450,6 @@ function checkWeekEntry(){
     s.log("没有未完成题目");
     return false;
 }
-
 /**
  * @description: 查找专项答题入口
  * @Author: Lejw
@@ -2498,6 +2497,7 @@ function start_close_radio(flag){
             tmp.click();
         }
     }
+    back_table();   // 防止部分机型未在主页
 }
 
 /**
@@ -2814,6 +2814,10 @@ threads.start(function(){
             if(text('重试').exists()){
                 s.info('点击重试');
                 text('重试').findOne(1000).click();
+            }
+            if(textContains('网络开小差').exists()){
+                s.info('点击确定');
+                text('确定').findOne(1000).click();
             }
         }
         catch(e){}
